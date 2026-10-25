@@ -13,8 +13,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all(); //[cite: 1, 2]
-        return view('admin.user.index', compact('users')); //[cite: 1, 2]
+        $dataUser = User::all();
+        return view('admin.user.index', compact('dataUser'));
     }
 
     /**
@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('admin.user.create'); //[cite: 1, 2]
+        return view('admin.user.create');
     }
 
     /**
@@ -31,15 +31,15 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100', //[cite: 1, 2]
-            'email' => 'required|email|unique:users,email', //[cite: 1, 2]
-            'password' => 'required|min:8|confirmed', //[cite: 1, 2]
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|confirmed',
         ]);
 
         User::create([
-            'name' => $request->name, //[cite: 1, 2]
-            'email' => $request->email, //[cite: 1, 2]
-            'password' => Hash::make($request->password), //[cite: 1, 2]
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
         return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
@@ -58,8 +58,8 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $user = User::findOrFail($id); //[cite: 1, 2]
-        return view('admin.user.edit', compact('user')); //[cite: 1, 2]
+        $user = User::findOrFail($id);
+        return view('admin.user.edit', compact('user'));
     }
 
     /**
@@ -67,12 +67,12 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id); //[cite: 1, 2]
+        $user = User::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:100', //[cite: 1, 2]
-            'email' => 'required|email|unique:users,email,' . $id, //[cite: 1, 2]
-            'password' => 'nullable|min:8|confirmed', //[cite: 1, 2]
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:8|confirmed',
         ]);
 
         $data = [
@@ -81,7 +81,7 @@ class UserController extends Controller
         ];
 
         if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password); //[cite: 1, 2]
+            $data['password'] = Hash::make($request->password);
         }
 
         $user->update($data);
@@ -94,8 +94,8 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id); //[cite: 1, 2]
-        $user->delete(); //[cite: 1, 2]
+        $user = User::findOrFail($id);
+        $user->delete();
 
         return redirect()->route('user.index')->with('success', 'User berhasil dihapus!');
     }
