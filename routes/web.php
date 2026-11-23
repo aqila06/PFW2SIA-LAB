@@ -22,11 +22,11 @@ Route::get('/mahasiswa', function () {
 });
 
 Route::get('/nama/{aqila}', function ($aqila) {
-    return 'Nama saya: '.$aqila;
+    return 'Nama saya: ' . $aqila;
 });
 
 Route::get('/nim/{param1?}', function ($param1 = '') {
-    return 'NIM saya: '.$param1;
+    return 'NIM saya: ' . $param1;
 });
 
 Route::get('/mahasiswa', function () {
@@ -42,13 +42,13 @@ Route::get('/about', function () {
 Route::get('/home', [HomeController::class, 'index']);
 
 Route::post('question/store', [QuestionController::class, 'store'])
-	    ->name('question.store');
+    ->name('question.store');
 
 Route::get('/question', [QuestionController::class, 'index'])
-	    ->name('question.index');
+    ->name('question.index');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard.index');
+    ->name('dashboard.index');
 
 Route::resource('pelanggan', PelangganController::class);
 
@@ -61,3 +61,22 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('auth.logout');
 
 Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/auth', [AuthController::class, 'index'])->name('auth.login');
+Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login.process');
+
+// Route Terproteksi (Wajib login)
+Route::middleware(['checkislogin'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard.index');
+
+    // Hanya Super Admin yang bisa mengelola data User
+    Route::middleware(['checkrole:Super Admin'])->group(function () {
+        Route::resource('user', UserController::class);
+    });
+
+    // Super Admin dan Mitra yang bisa mengelola data Pelanggan
+    Route::middleware(['checkrole:Super Admin,Mitra'])->group(function () {
+        Route::resource('pelanggan', PelangganController::class);
+    });
+});

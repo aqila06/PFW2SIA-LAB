@@ -41,16 +41,18 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
+        $validated = $request->validate([
+            'name'     => 'required|string|max:100',
+            'email'    => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
+            'role'     => 'required|in:Super Admin,Pelanggan,Mitra'
         ]);
 
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
+            'role'     => $request->role,
         ]);
 
         return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
@@ -80,24 +82,26 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|min:8|confirmed',
+            'role'     => 'required|in:Super Admin,Pelanggan,Mitra'
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-        ];
+        $user->name  = $validated['name'];
+        $user->email = $validated['email'];
 
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+        if (! empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
         }
 
-        $user->update($data);
+        $user->role = $validated['role'];
+        $user->save();
 
-        return redirect()->route('user.index')->with('success', 'Data user berhasil diperbarui!');
+        return redirect()
+            ->route('user.index')
+            ->with('success', 'Perubahan data user berhasil!');
     }
 
     /**
