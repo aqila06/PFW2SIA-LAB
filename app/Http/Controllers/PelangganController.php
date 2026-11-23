@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PelangganController extends Controller
 {
@@ -12,6 +13,11 @@ class PelangganController extends Controller
      */
     public function index(Request $request)
     {
+        if (!Auth::check()) {
+            return redirect()
+                ->route('auth.login') 
+                ->withErrors('Silahkan login terlebih dahulu');
+        }
         $filterableColumns = ['gender'];
         $searchableColumns = ['first_name', 'last_name', 'email']; // Menambahkan kolom yang dapat dicari
 

@@ -17,6 +17,7 @@
                     </div>
                     <!-- Navbar links -->
                     <ul class="navbar-nav align-items-center">
+                        @if(Auth::check())
                         <li class="nav-item dropdown">
                             <a class="nav-link text-dark notification-bell unread dropdown-toggle" data-unread-notifications="true" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                 <svg class="icon icon-sm text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -133,6 +134,9 @@
                                 </form>
                             </div>
                         </li>
+                        @else
+                            <a class="btn btn-primary" href="{{ route('auth.login') }}">Silahkan Login</a>
+                        @endif
                     </ul>
                 </div>
             </div>
